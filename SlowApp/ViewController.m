@@ -24,12 +24,17 @@
         myQueue = dispatch_queue_create("com.example.gcdtest", NULL);
     }
 
-    dispatch_async(myQueue, ^{[self longRunningOperation];});
+    dispatch_async(myQueue, ^{
+        [self longRunningOperation];
+    });
 }
 
 -(void) longRunningOperation {
-    [NSThread sleepForTimeInterval:5];
-    [self.resultLabel setText:[NSString stringWithFormat:@"Results: %d", arc4random()]];
+    [NSThread sleepForTimeInterval:5]; // UI update has to happen in main thread
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.resultLabel setText:[NSString stringWithFormat:@"Results: %d", arc4random()]];
+    });
 }
 
 - (void)viewDidLoad
